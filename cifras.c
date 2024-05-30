@@ -113,8 +113,10 @@ void data(char m[], int ano){
 }
 
 void metades(char m[]){
-    int size=stelen(m);
-    int meio=(size/2)+1;
+    int size=strlen(m);
+    int meio; 
+    if(size%2==0)meio=size/2;
+    else meio=(size/2)+1;
     int i,j,k;
     char pmetade[meio+1];
     char smetade[size-meio+1];
@@ -122,15 +124,23 @@ void metades(char m[]){
         pmetade[i]=m[i];
     }
     pmetade[i]='\0';
-    for(j=0;i<size;i++){
-        smetade[j++]=m[i];
+    for(j=0;i<size;i++,j++){
+        smetade[j]=m[i];
     }
     smetade[j]='\0';
-    for(i=0,j=0,k=0;pmetade[i]!='\0'&& smetade[i]!='\0';i++){
+    for(i=0,j=0,k=0;pmetade[j]!='\0'&& smetade[k]!='\0';i++){
         if(i%2==0)m[i]=pmetade[j++];
         else m[i]=smetade[k++];
     }
+    if(pmetade[j]!='\0'){
+        m[i++]=pmetade[j];
+    }
+    if(smetade[k]!='\0'){
+        m[i++]=smetade[k];
+    }
+    m[i]='\0';
 }
+
 
 int main(){
     char mensagem[100];
@@ -174,6 +184,15 @@ int main(){
                     if(scanf("%s",mensagem)!=0)
                     data(mensagem,ano);
                 }
+            }
+            else {
+                printf("COMANDO INVALIDO\n");
+            }
+            break;
+        case 'M':
+            if(strcmp("MTD",mensagem)==0){
+                if(scanf("%s",mensagem)!=0)
+                metades(mensagem);
             }
             else {
                 printf("COMANDO INVALIDO\n");
