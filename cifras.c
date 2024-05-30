@@ -153,25 +153,19 @@ void carangueijoAux(char m[]){
 }
 
 void carangueijo(char m[]){
-    char aux[strlen(m)];
-    char palavra[strlen(m)+1];
-    int i,j, aux_index = 0;
-    for(i=0;m[i]!='\0';i++){
-        for(j=0;m[i]!=' ' && m[i]!='\0';j++,i++){
-            palavra[j]=m[i];
-        }
-        palavra[j]='\0';
-        carangueijoAux(palavra);
-        int temp=0;
-        while(temp<j){
-            aux[aux_index++]=palavra[temp++];
-        }
-        if(m[i]!='\0'){
-            aux[aux_index++]=' ';
+    char aux[strlen(m) + 1];
+    int i, j, aux_index = 0;
+    for(i = strlen(m) - 1; i >= 0; i--){
+        if(m[i] == ' ' || i == 0){
+            for(j = (i == 0 ? i : i + 1); j < aux_index; j++){
+                aux[j] = m[j];
+            }
+            aux[aux_index] = '\0';
+            carangueijoAux(aux);
+            strcpy(m + i + 1, aux);
+            aux_index = i;
         }
     }
-    aux[aux_index]='\0';
-    strcpy(m,aux);
 }
 
 int main(){
