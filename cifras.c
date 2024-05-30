@@ -141,6 +141,17 @@ void metades(char m[]){
     m[i]='\0';
 }
 
+void carangueijo(char m[]) {
+    int i, j;
+    char temp;
+    int size = strlen(m);
+    
+    for (i = 0, j = size - 1; i < j; i++, j--) {
+        temp = m[i];
+        m[i] = m[j];
+        m[j] = temp;
+    }
+}
 
 int main(){
     char mensagem[100];
@@ -193,6 +204,15 @@ int main(){
             if(strcmp("MTD",mensagem)==0){
                 if(scanf("%s",mensagem)!=0)
                 metades(mensagem);
+            }
+            else {
+                printf("COMANDO INVALIDO\n");
+            }
+            break;
+        case 'C':
+            if(strcmp("CRG",mensagem)==0){
+                if(scanf("%s",mensagem)!=0)
+                carangueijo(mensagem);
             }
             else {
                 printf("COMANDO INVALIDO\n");
