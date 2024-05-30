@@ -141,90 +141,122 @@ void metades(char m[]){
     m[i]='\0';
 }
 
-void carangueijo(char m[]) {
-    int i, j;
+void carangueijoAux(char m[]){
+    int i,j;
     char temp;
-    int size = strlen(m);
-    
-    for (i = 0, j = size - 1; i < j; i++, j--) {
-        temp = m[i];
-        m[i] = m[j];
-        m[j] = temp;
+    int size= strlen(m);
+    for(i=0,j=size-1;i<j;i++,j--){
+        temp=m[i];
+        m[i]=m[j];
+        m[j]=temp;
     }
+}
+
+void carangueijo(char m[]){
+    char aux[strlen(m)];
+    char palavra[strlen(m)+1];
+    int i,j, aux_index = 0;
+    for(i=0;m[i]!='\0';i++){
+        for(j=0;m[i]!=' ' && m[i]!='\0';j++,i++){
+            palavra[j]=m[i];
+        }
+        palavra[j]='\0';
+        carangueijoAux(palavra);
+        int temp=0;
+        while(temp<j){
+            aux[aux_index++]=palavra[temp++];
+        }
+        if(m[i]!='\0'){
+            aux[aux_index++]=' ';
+        }
+    }
+    aux[aux_index]='\0';
+    strcpy(m,aux);
 }
 
 int main(){
     char mensagem[100];
-    while (scanf("%s", mensagem)==1){
-    switch (mensagem[0]) {
-        case 'E':
-            if (strcmp("EXIT", mensagem) == 0)
-                exit(0);
-            else
-                printf("COMANDO INVALIDO\n");
-            break;
-        case 'A':
-            if (strcmp("AI", mensagem) == 0) {
-                if (scanf("%s", mensagem) != 0)
-                    alfabetoInvertido(mensagem);
-            } else if (strcmp("AT", mensagem) == 0) {
-                char c;
-                if (scanf(" %c", &c) != 0) {
-                    if (scanf("%s", mensagem) != 0)
-                        alfabetoTransposto(mensagem, c);
+    while (fgets(mensagem, sizeof(mensagem), stdin)){
+        mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
+        switch (mensagem[0]) {
+            case 'E':
+                if (strcmp("EXIT", mensagem) == 0)
+                    exit(0);
+                else
+                    printf("COMANDO INVALIDO\n");
+                break;
+            case 'A':
+                if (strcmp("AI", mensagem) == 0) {
+                    if (fgets(mensagem, sizeof(mensagem), stdin)){
+                        mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
+                        alfabetoInvertido(mensagem);
+                    }
+                } else if (strcmp("AT", mensagem) == 0) {
+                    char c;
+                    if (scanf(" %c", &c) != 0) {
+                        if (fgets(mensagem, sizeof(mensagem), stdin)){
+                            mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
+                            alfabetoTransposto(mensagem, c);
+                        }
+                    }
+                } else {
+                    printf("COMANDO INVALIDO\n");
                 }
-            } else {
-                printf("COMANDO INVALIDO\n");
-            }
-            break;
-        case 'P':
-            if (strcmp("PM", mensagem) == 0) {
-                int z;
-                if (scanf(" %d", &z) != 0) {
-                    if (scanf("%s", mensagem) != 0)
-                        passaMelros(mensagem, z);
+                break;
+            case 'P':
+                if (strcmp("PM", mensagem) == 0) {
+                    int z;
+                    if (scanf(" %d", &z) != 0) {
+                        if (fgets(mensagem, sizeof(mensagem), stdin)){
+                            mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
+                            passaMelros(mensagem, z);
+                        }
+                    }
+                } else {
+                    printf("COMANDO INVALIDO\n");
                 }
-            } else {
-                printf("COMANDO INVALIDO\n");
-            }
-            break;
-        case 'D':
-            if(strcmp("DATA",mensagem)==0){
-                int ano;
-                if(scanf(" %d", &ano)!=0){
-                    if(scanf("%s",mensagem)!=0)
-                    data(mensagem,ano);
+                break;
+            case 'D':
+                if(strcmp("DATA",mensagem)==0){
+                    int ano;
+                    if(scanf(" %d", &ano)!=0){
+                        if (fgets(mensagem, sizeof(mensagem), stdin)){
+                            mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
+                            data(mensagem,ano);
+                        }
+                    }
                 }
-            }
-            else {
+                else {
+                    printf("COMANDO INVALIDO\n");
+                }
+                break;
+            case 'M':
+                if(strcmp("MTD",mensagem)==0){
+                    if (fgets(mensagem, sizeof(mensagem), stdin)){
+                        mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
+                        metades(mensagem);
+                    }
+                }
+                else {
+                    printf("COMANDO INVALIDO\n");
+                }
+                break;
+            case 'C':
+                if(strcmp("CRG",mensagem)==0){
+                    if (fgets(mensagem, sizeof(mensagem), stdin)){
+                        mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
+                        carangueijo(mensagem);
+                    }
+                }
+                else {
+                    printf("COMANDO INVALIDO\n");
+                }
+                break;
+            default:
                 printf("COMANDO INVALIDO\n");
-            }
-            break;
-        case 'M':
-            if(strcmp("MTD",mensagem)==0){
-                if(scanf("%s",mensagem)!=0)
-                metades(mensagem);
-            }
-            else {
-                printf("COMANDO INVALIDO\n");
-            }
-            break;
-        case 'C':
-            if(strcmp("CRG",mensagem)==0){
-                if(scanf("%s",mensagem)!=0)
-                carangueijo(mensagem);
-            }
-            else {
-                printf("COMANDO INVALIDO\n");
-            }
-            break;
-        default:
-            printf("COMANDO INVALIDO\n");
-            break;
-    }
-    
-    printf("Mensagem descodificada: %s\n", mensagem);
+                break;
+        }
+        printf("Mensagem descodificada: %s\n", mensagem);
     } 
     return 0;
-
 }
