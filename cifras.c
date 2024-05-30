@@ -25,9 +25,9 @@ void alfabetoTransposto(char m[],char x){
     for(int i=0;m[i]!='\0';i++){
         if(isalpha(m[i])){
             if(isupper(m[i])){
-                m[i]=((indiceLetra(m[i])+mov)%26)+'A';
+                m[i]=((indiceLetra(m[i])-mov+26)%26)+'A';
             }
-            else m[i]=((indiceLetra(m[i])+mov)%26)+'a';
+            else m[i]=((indiceLetra(m[i])-mov+26)%26)+'a';
         }
     }
 }
@@ -112,6 +112,25 @@ void data(char m[], int ano){
     decifraData(temp,matriz,m,size);
 }
 
+void metades(char m[]){
+    int size=stelen(m);
+    int meio=(size/2)+1;
+    int i,j,k;
+    char pmetade[meio+1];
+    char smetade[size-meio+1];
+    for(i=0;i<meio;i++){
+        pmetade[i]=m[i];
+    }
+    pmetade[i]='\0';
+    for(j=0;i<size;i++){
+        smetade[j++]=m[i];
+    }
+    smetade[j]='\0';
+    for(i=0,j=0,k=0;pmetade[i]!='\0'&& smetade[i]!='\0';i++){
+        if(i%2==0)m[i]=pmetade[j++];
+        else m[i]=smetade[k++];
+    }
+}
 
 int main(){
     char mensagem[100];
