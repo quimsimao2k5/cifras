@@ -152,20 +152,59 @@ void carangueijoAux(char m[]){
     }
 }
 
-void carangueijo(char m[]){
-    char aux[strlen(m) + 1];
-    int i, j, aux_index = 0;
-    for(i = strlen(m) - 1; i >= 0; i--){
-        if(m[i] == ' ' || i == 0){
-            for(j = (i == 0 ? i : i + 1); j < aux_index; j++){
-                aux[j] = m[j];
+void invertePalavras(char m[]) {
+    int tamanho = strlen(m);
+    char aux[tamanho + 1];
+    int inicioPalavra, fimPalavra;
+    int i, j = 0;
+
+    // Iterar a string de trás para frente
+    for (i = tamanho - 1; i >= 0; i--) {
+        // Encontrar o fim de uma palavra
+        if (m[i] == ' ' || i == 0) {
+            if (i == 0) {
+                inicioPalavra = i;
+            } else {
+                inicioPalavra = i + 1;
             }
-            aux[aux_index] = '\0';
-            carangueijoAux(aux);
-            strcpy(m + i + 1, aux);
-            aux_index = i;
+            fimPalavra = inicioPalavra;
+
+            // Copiar a palavra para o auxiliar
+            while (fimPalavra < tamanho && m[fimPalavra] != ' ') {
+                aux[j++] = m[fimPalavra++];
+            }
+
+            // Adicionar um espaço após a palavra, se não for o fim da string original
+            if (i > 0) {
+                aux[j++] = ' ';
+            }
         }
     }
+    aux[j] = '\0';  // Finalizar a string auxiliar
+    strcpy(m, aux); // Copiar a string auxiliar de volta para a original
+}
+
+void carangueijo(char m[]){
+    char aux[strlen(m)];
+    char palavra[strlen(m)+1];
+    int i,j, aux_index = 0;
+    for(i=0;m[i]!='\0';i++){
+        for(j=0;m[i]!=' ' && m[i]!='\0';j++,i++){
+            palavra[j]=m[i];
+        }
+        palavra[j]='\0';
+        carangueijoAux(palavra);
+        int temp=0;
+        while(temp<j){
+            aux[aux_index++]=palavra[temp++];
+        }
+        if(m[i]!='\0'){
+            aux[aux_index++]=' ';
+        }
+    }
+    aux[aux_index]='\0';
+    invertePalavras(aux);
+    strcpy(m,aux);
 }
 
 int main(){
