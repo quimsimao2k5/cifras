@@ -234,6 +234,34 @@ void carangueijo(char m[]){
     strcpy(m,aux);
 }
 
+void decifranum(char m[], int aux[],int diff, int N){
+    int i=0,a=0;
+    while(i<N){
+        if(aux[i]!=-1 && aux[i+1]!=-1){
+            int par=(aux[i]*10)+aux[i+1];
+            m[a++]='A'+par-diff;
+            i+=2;
+        }
+        else{
+            m[a++]=' ';
+            i++
+        }
+    }
+    m[a]='\0';
+}
+
+void alfabetonumeral(char m[], int diff){
+    int i=0;
+    int size=strlen(m);
+    int aux[size];
+    while(m[i]!='\0'){
+        if(m[i]!=' ')aux[i]=m[i]-'0';
+        else aux[i]=-1;
+        i++
+    }
+    decifranum(m,aux,diff,size);
+}
+
 int main(){
     char mensagem[100]="1095189475 99199499";
     // while (fgets(mensagem, sizeof(mensagem), stdin)){
