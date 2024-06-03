@@ -244,7 +244,7 @@ void decifranum(char m[], int aux[],int diff, int N){
         }
         else{
             m[a++]=' ';
-            i++
+            i++;
         }
     }
     m[a]='\0';
@@ -257,7 +257,7 @@ void alfabetonumeral(char m[], int diff){
     while(m[i]!='\0'){
         if(m[i]!=' ')aux[i]=m[i]-'0';
         else aux[i]=-1;
-        i++
+        i++;
     }
     decifranum(m,aux,diff,size);
 }
