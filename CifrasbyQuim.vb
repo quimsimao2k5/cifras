@@ -1,6 +1,6 @@
 Imports System.Text
 
-Public Class Form1
+Public Class CifrasbyQuim
     Private Function IndiceLetra(ByVal letra As Char) As Integer
         If Char.IsUpper(letra) Then
             Return Asc(letra) - Asc("A"c)
@@ -59,10 +59,12 @@ Public Class Form1
         Return resultado.ToString()
     End Function
 
-    Private Sub InicializaMatriz(ByRef matriz(,) As Char)
+    Public Sub InicializaMatriz(ByRef matriz(,) As Char)
+        Dim i, j As Integer
         Dim atual As Char = "A"c
-        For i As Integer = 0 To 3
-            For j As Integer = 0 To 9
+
+        For i = 0 To 3
+            For j = 0 To 9
                 If atual <= "Z"c Then
                     matriz(i, j) = atual
                     atual = Chr(Asc(atual) + 1)
@@ -72,55 +74,82 @@ Public Class Form1
                 End If
             Next
         Next
-        For i As Integer = 0 To 3
-            For j As Integer = 0 To 9
-                If matriz(i, j) = Chr(0) Then ' Verifica se o caractere não foi inicializado
-                    matriz(i, j) = atual
-                    atual = Chr(Asc(atual) + 1)
-                End If
+
+        For i = i To 3
+            For j = j To 9
+                matriz(i, j) = atual
+                atual = Chr(Asc(atual) + 1)
             Next
         Next
     End Sub
 
-    Private Function ProcuraArray(ByVal a() As Integer, ByVal x As Integer) As Integer
-        For i As Integer = 0 To a.Length - 1
-            If a(i) = x Then Return i
+    Public Function ProcuraArray(ByVal a() As Integer, ByVal x As Integer) As Integer
+        For i As Integer = 0 To 3
+            If a(i) = x Then
+                Return i
+            End If
         Next
         Return -1
     End Function
 
-    Private Sub DataAux(ByVal ano() As Integer, ByRef temp() As Integer, ByVal N As Integer)
-        For i As Integer = 0 To N - 1 Step 2
-            temp(i) = ProcuraArray(ano, temp(i))
-        Next
-        For i As Integer = 1 To N - 1 Step 2
-            If temp(i) <> 0 Then
-                temp(i) = (temp(i) - 1) Mod 10
+    Public Sub DataAux(ByVal ano() As Integer, ByRef temp() As Integer, ByVal N As Integer)
+        Dim i As Integer = 0
+        While i < N
+            If temp(i) = -1 Then
+                i += 1
             Else
-                temp(i) = 9
+                temp(i) = ProcuraArray(ano, temp(i))
+                i += 2
             End If
-        Next
+        End While
+
+        i = 1
+        While i < N
+            If temp(i - 1) = -1 Then
+                i += 1
+            Else
+                If temp(i) > 0 Then
+                    temp(i) = (temp(i) - 1) Mod 10
+                Else
+                    temp(i) = 9
+                End If
+                i += 2
+            End If
+        End While
     End Sub
 
-    Private Sub DecifraData(ByVal temp() As Integer, ByVal matriz(,) As Char, ByRef mensagem As String, ByVal tamanho As Integer)
+    Public Sub DecifraData(ByVal temp() As Integer, ByVal matriz(,) As Char, ByRef mensagem As Char(), ByVal tamanho As Integer)
+        Dim i As Integer = 0
         Dim a As Integer = 0
-        Dim resultado As New StringBuilder()
-        For i As Integer = 1 To tamanho - 1 Step 2
-            Dim j As Integer = temp(i - 1)
-            Dim k As Integer = temp(i)
-            resultado.Append(matriz(j, k))
-        Next
-        mensagem = resultado.ToString()
+
+        While i < tamanho
+            If temp(i) = -1 Then
+                mensagem(a) = " "c
+            Else
+                Dim j As Integer = temp(i)
+                Dim k As Integer = temp(i + 1)
+                mensagem(a) = matriz(j, k)
+                i += 1
+            End If
+            i += 1
+            a += 1
+        End While
+
+        mensagem(a) = Chr(0)
     End Sub
 
-    Private Sub Data(ByRef m As String, ByVal ano As Integer)
+    Public Sub Data(ByRef m As String, ByVal ano As Integer)
         Dim size As Integer = m.Length
         Dim anoA(3) As Integer
         Dim temp(size - 1) As Integer
         Dim matriz(3, 9) As Char
 
         For i As Integer = 0 To size - 1
-            temp(i) = Asc(m(i)) - Asc("0"c)
+            If m(i) <> " "c Then
+                temp(i) = Asc(m(i)) - Asc("0"c)
+            Else
+                temp(i) = -1
+            End If
         Next
 
         For i As Integer = 3 To 0 Step -1
@@ -130,8 +159,11 @@ Public Class Form1
 
         InicializaMatriz(matriz)
         DataAux(anoA, temp, size)
-        DecifraData(temp, matriz, m, size)
+        Dim mensagem(size - 1) As Char
+        DecifraData(temp, matriz, mensagem, size)
+        m = New String(mensagem)
     End Sub
+
 
     Private Sub Metades(ByRef m As String)
         Dim size As Integer = m.Length
@@ -262,6 +294,45 @@ Public Class Form1
         m = auxStr
     End Sub
 
+    Private Sub DecifraNum(ByRef m As Char(), ByVal aux As Integer(), ByVal diff As Integer, ByVal N As Integer)
+        Dim i As Integer = 0
+        Dim a As Integer = 0
+
+        While i < N
+            If aux(i) <> -1 AndAlso aux(i + 1) <> -1 Then
+                Dim par As Integer = (aux(i) * 10) + aux(i + 1)
+                m(a) = Chr(Asc("A"c) + par - diff)
+                a += 1
+                i += 2
+            Else
+                m(a) = " "c
+                a += 1
+                i += 1
+            End If
+        End While
+
+        ReDim Preserve m(a)
+    End Sub
+
+    Private Sub AlfabetoNumeral(ByRef m As String, ByVal diff As Integer)
+        Dim size As Integer = m.Length
+        Dim aux(size - 1) As Integer
+        Dim i As Integer
+
+        For i = 0 To size - 1
+            If m(i) <> " "c Then
+                aux(i) = Asc(m(i)) - Asc("0"c)
+            Else
+                aux(i) = -1
+            End If
+        Next
+
+        Dim mArray As Char() = m.ToCharArray()
+        DecifraNum(mArray, aux, diff, size)
+        m = New String(mArray)
+    End Sub
+
+
 
     Private Sub Button1_Click(ByVal sender As Object, ByVal e As EventArgs) Handles Button1.Click
         If cifrasbox.SelectedItem IsNot Nothing AndAlso cifrasbox.SelectedItem.ToString() = "Alfabeto Invertido" Then
@@ -303,12 +374,25 @@ Public Class Form1
             Dim mensa As String = mensagem.Text
             Carangueijo(mensa)
             resposta.Text = mensa
+        ElseIf cifrasbox.SelectedItem IsNot Nothing AndAlso cifrasbox.SelectedItem.ToString() = "Alfabeto Numeral com Chave" Then
+            If extratxt.Text = "" Then
+                MsgBox("Preenche o deslocamento")
+                Return
+            End If
+            Dim mensa As String = mensagem.Text
+            Dim deslocamento As Integer = extratxt.Text
+            AlfabetoNumeral(mensa, deslocamento)
+            resposta.Text = mensa
+        ElseIf cifrasbox.SelectedItem IsNot Nothing AndAlso cifrasbox.SelectedItem.ToString() = "Alfabeto Numeral" Then
+            Dim mensa As String = mensagem.Text
+            AlfabetoNumeral(mensa, 0)
+            resposta.Text = mensa
         End If
     End Sub
 
     Private Sub cifrasbox_SelectedIndexChanged(ByVal sender As Object, ByVal e As EventArgs) Handles cifrasbox.SelectedIndexChanged
         ' Define as opções que fazem Label1 e TextBox1 visíveis
-        Dim opcoesVisiveis As New List(Of String) From {"Alfabeto Transposto", "Passa Melros", "Data"}
+        Dim opcoesVisiveis As New List(Of String) From {"Alfabeto Transposto", "Passa Melros", "Data", "Alfabeto Numeral com Chave"}
 
         If opcoesVisiveis.Contains(cifrasbox.SelectedItem.ToString()) Then
             If cifrasbox.SelectedItem IsNot Nothing AndAlso cifrasbox.SelectedItem.ToString() = "Alfabeto Transposto" Then
@@ -321,8 +405,10 @@ Public Class Form1
                 extratxt.Visible = True
             ElseIf cifrasbox.SelectedItem IsNot Nothing AndAlso cifrasbox.SelectedItem.ToString() = "Data" Then
                 labelextra.Text = "Ano"
-                warningtext.Text = "Não pode ter espaços"
-                warningtext.Visible = True
+                labelextra.Visible = True
+                extratxt.Visible = True
+            ElseIf cifrasbox.SelectedItem IsNot Nothing AndAlso cifrasbox.SelectedItem.ToString() = "Alfabeto Numeral com Chave" Then
+                labelextra.Text = "Número"
                 labelextra.Visible = True
                 extratxt.Visible = True
             End If
