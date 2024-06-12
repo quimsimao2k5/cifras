@@ -262,8 +262,55 @@ void alfabetonumeral(char m[], int diff){
     decifranum(m,aux,diff,size);
 }
 
+int isVogal(char letra){
+    if((letra=='A')||(letra=='E')||(letra=='I')||(letra=='O')||(letra=='U'))return 1;
+    else return 0;
+}
+
+void romanoArabe(char m[]){
+    char consoantes[] = "BCDFGHJKLMNPQRSTVWXYZ";
+    char vogais[] = "AEIOU";
+    int aux[strlen(m)];
+    int k=0,j=0;
+    while(m[k]!='\0'){
+        if(isdigit(m[k])){
+            if(isdigit(m[k+1])){
+                aux[j++]=(m[k]-'0')*10+(m[k+1]-'0');
+                k+=3;
+            }
+            else{
+                aux[j++]=m[k]-'0';
+                k+=2;
+            }
+        }
+        else if(isalpha(m[k])){
+            if(m[k+1]==' '){
+                if(m[k]=='I')aux[j++]=0;
+                else aux[j++]=-4;
+                k+=2;
+            }
+            else if(m[k+2]==' '){
+                if(m[k+1]=='I')aux[j++]=-1;
+                else aux[j++]=-3;
+                k+=3;
+            }
+            else{
+                aux[j++]=-2;
+                k+=4;
+            }
+        }
+        else k++;
+    }
+    int i;
+    for(i=0;i<j;i++){
+        int temp=aux[i];
+        if(temp>0)m[i]=consoantes[temp-1];
+        else m[i]=vogais[-temp];
+    }
+    m[i]='\0';
+}
 int main(){
-    char mensagem[100]="1095189475 99199499";
+    char mensagem[100]="13 V III 10 2 14 III 17 II 9";
     // while (fgets(mensagem, sizeof(mensagem), stdin)){
     //     mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
     //     switch (mensagem[0]) {
@@ -346,8 +393,7 @@ int main(){
     //     }
     //     printf("Mensagem descodificada: %s\n", mensagem);
     // }
-    printf("size: %ld\n",strlen(mensagem));
-    data(mensagem,1978);
+    romanoArabe(mensagem);
     printf("Mensagem descodificada: %s\n", mensagem);
     return 0;
 }
