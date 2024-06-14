@@ -309,6 +309,63 @@ void romanoArabe(char m[]){
     }
     m[i]='\0';
 }
+
+void vertical(char *mensagem, int chave, char *direcao) {
+    int comprimento = strlen(mensagem);
+    int colunas = (comprimento + chave - 1) / chave;
+    char tabela[chave][colunas];
+
+    memset(tabela, '\0', sizeof(tabela));
+
+    int k = 0;
+    for (int i = 0; i < chave; i++) {
+        for (int j = 0; j < colunas; j++) {
+            if (k < comprimento) {
+                tabela[i][j] = mensagem[k++];
+            } else {
+                tabela[i][j] = '\0';
+            }
+        }
+    }
+
+    k = 0;
+    if (strcmp(direcao, "cima") == 0) {
+        for (int j = 0; j < colunas; j++) {
+            for (int i = chave - 1; i >= 0; i--) {
+                if (tabela[i][j] != '\0') {
+                    mensagem[k++] = tabela[i][j];
+                }
+            }
+        }
+    } else if (strcmp(direcao, "baixo") == 0) {
+        for (int j = 0; j < colunas; j++) {
+            for (int i = 0; i < chave; i++) {
+                if (tabela[i][j] != '\0') {
+                    mensagem[k++] = tabela[i][j];
+                }
+            }
+        }
+    } else {
+        printf("Direção inválida. Use 'cima' ou 'baixo'.\n");
+        return;
+    }
+    mensagem[k] = '\0';
+}
+
+int main() {
+    char mensagem[] = "CEOSTREUI";
+    int chave = 3;
+    char direcao[] = "cima";
+
+    descodificarMensagemVertical(mensagem, chave, direcao);
+
+    // Imprimir a mensagem descodificada
+    printf("Mensagem descodificada: %s\n", mensagem);
+
+    return 0;
+}
+
+
 int main(){
     char mensagem[100]="13 V III 10 2 14 III 17 II 9";
     // while (fgets(mensagem, sizeof(mensagem), stdin)){
