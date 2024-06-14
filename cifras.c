@@ -310,18 +310,20 @@ void romanoArabe(char m[]){
     m[i]='\0';
 }
 
-void vertical(char mensagem[], int chave, char direcao[]) {
-    int comprimento = strlen(mensagem);
-    int colunas = (comprimento + chave - 1) / chave;
+void descodificarPalavraVertical(char *palavra, int chave, char *direcao, char *resultado) {
+    int comprimento = strlen(palavra);
+    int colunas = (comprimento + chave - 1) / chave; // Calcular colunas, arredondando para cima se necessário
     char tabela[chave][colunas];
 
+    // Inicializando a tabela com '\0'
     memset(tabela, '\0', sizeof(tabela));
 
+    // Preenchendo a tabela com a palavra codificada
     int k = 0;
     for (int i = 0; i < chave; i++) {
         for (int j = 0; j < colunas; j++) {
             if (k < comprimento) {
-                tabela[i][j] = mensagem[k++];
+                tabela[i][j] = palavra[k++];
             } else {
                 tabela[i][j] = '\0';
             }
@@ -333,7 +335,7 @@ void vertical(char mensagem[], int chave, char direcao[]) {
         for (int j = 0; j < colunas; j++) {
             for (int i = chave - 1; i >= 0; i--) {
                 if (tabela[i][j] != '\0') {
-                    mensagem[k++] = tabela[i][j];
+                    resultado[k++] = tabela[i][j];
                 }
             }
         }
@@ -341,7 +343,7 @@ void vertical(char mensagem[], int chave, char direcao[]) {
         for (int j = 0; j < colunas; j++) {
             for (int i = 0; i < chave; i++) {
                 if (tabela[i][j] != '\0') {
-                    mensagem[k++] = tabela[i][j];
+                    resultado[k++] = tabela[i][j];
                 }
             }
         }
@@ -349,22 +351,39 @@ void vertical(char mensagem[], int chave, char direcao[]) {
         printf("Direção inválida. Use 'cima' ou 'baixo'.\n");
         return;
     }
-    mensagem[k] = '\0';
+    resultado[k] = '\0'; // Adiciona o terminador nulo ao final da string
 }
 
-int main() {
-    char mensagem[] = "CEOSTREUI";
-    int chave = 3;
-    char direcao[] = "cima";
+void descodificarMensagemVertical(char *mensagem, int chave, char *direcao, char *mensagemDescodificada) {
+    char palavra[100]; // Buffer temporário para armazenar uma palavra
+    int indicePalavra = 0; // Índice para o buffer temporário
+    int k = 0; // Índice para a mensagem descodificada
+    int comprimento = strlen(mensagem);
 
-    descodificarMensagemVertical(mensagem, chave, direcao);
+    for (int i = 0; i <= comprimento; i++) {
+        if (mensagem[i] == ' ' || mensagem[i] == '\0') {
+            // Fim de uma palavra ou fim da mensagem
+            palavra[indicePalavra] = '\0'; // Terminar a palavra temporária
 
-    // Imprimir a mensagem descodificada
-    printf("Mensagem descodificada: %s\n", mensagem);
+            char resultado[100]; // Buffer para armazenar o resultado da descodificação da palavra
+            descodificarPalavraVertical(palavra, chave, direcao, resultado);
 
-    return 0;
+            // Adicionar a palavra descodificada na mensagem final
+            for (int j = 0; j < strlen(resultado); j++) {
+                mensagemDescodificada[k++] = resultado[j];
+            }
+
+            if (mensagem[i] == ' ') {
+                mensagemDescodificada[k++] = ' '; // Adicionar espaço entre as palavras
+            }
+
+            indicePalavra = 0; // Resetar o índice da palavra temporária para a próxima palavra
+        } else {
+            palavra[indicePalavra++] = mensagem[i]; // Adicionar o caractere à palavra temporária
+        }
+    }
+    mensagemDescodificada[k] = '\0'; // Terminar a mensagem descodificada
 }
-
 
 int main(){
     char mensagem[100]="13 V III 10 2 14 III 17 II 9";
