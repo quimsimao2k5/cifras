@@ -310,7 +310,7 @@ void romanoArabe(char m[]){
     m[i]='\0';
 }
 
-void vertical(char *mensagem, int chave, char *direcao) {
+void vertical(char mensagem[], int chave, char direcao[]) {
     int comprimento = strlen(mensagem);
     int colunas = (comprimento + chave - 1) / chave;
     char tabela[chave][colunas];
