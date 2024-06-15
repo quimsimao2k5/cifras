@@ -386,6 +386,79 @@ void descodificarMensagemVertical(char *mensagem, int chave, char *direcao, char
     mensagemDescodificada[k] = '\0'; // Terminar a mensagem descodificada
 }
 
+void horizontalPalavras(char *palavra, int chave, char *direcao, char *resultado){
+    int comprimento = strlen(palavra);
+    int linhas = (comprimento + chave - 1) / chave;
+    char tabela[linhas][chave];
+
+    memset(tabela, '\0', sizeof(tabela));
+
+    int k=0;
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < chave; j++) {
+            if (k < comprimento) {
+                tabela[i][j] = palavra[k++];
+            } else {
+                tabela[i][j] = '\0';
+            }
+        }
+    }
+
+    k = 0;
+    if (strcmp(direcao, "esquerda") == 0) {
+        for (int i = 0; i < linhas; i++) {
+            for (int j = chave - 1; j >= 0; j--) {
+                if (tabela[i][j] != '\0') {
+                    resultado[k++] = tabela[i][j];
+                }
+            }
+        }
+    } else if (strcmp(direcao, "direita") == 0) {
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < chave; j++) {
+                if (tabela[i][j] != '\0') {
+                    resultado[k++] = tabela[i][j];
+                }
+            }
+        }
+    } else {
+        printf("Direção inválida. Use 'cima' ou 'baixo'.\n");
+        return;
+    }
+    resultado[k] = '\0';
+}
+
+void descodificarMensagemHorizontal(char *mensagem, int chave, char *direcao, char *mensagemDescodificada) {
+    char palavra[100]; // Buffer temporário para armazenar uma palavra
+    int indicePalavra = 0; // Índice para o buffer temporário
+    int k = 0; // Índice para a mensagem descodificada
+    int comprimento = strlen(mensagem);
+
+    for (int i = 0; i <= comprimento; i++) {
+        if (mensagem[i] == ' ' || mensagem[i] == '\0') {
+            // Fim de uma palavra ou fim da mensagem
+            palavra[indicePalavra] = '\0'; // Terminar a palavra temporária
+
+            char resultado[100]; // Buffer para armazenar o resultado da descodificação da palavra
+            horizontalPalavras(palavra, chave, direcao, resultado);
+
+            // Adicionar a palavra descodificada na mensagem final
+            for (int j = 0; j < strlen(resultado); j++) {
+                mensagemDescodificada[k++] = resultado[j];
+            }
+
+            if (mensagem[i] == ' ') {
+                mensagemDescodificada[k++] = ' '; // Adicionar espaço entre as palavras
+            }
+
+            indicePalavra = 0; // Resetar o índice da palavra temporária para a próxima palavra
+        } else {
+            palavra[indicePalavra++] = mensagem[i]; // Adicionar o caractere à palavra temporária
+        }
+    }
+    mensagemDescodificada[k] = '\0'; // Terminar a mensagem descodificada
+}
+
 int quadradoPerfeito(int num) {
     if (num < 0) {
         return 0;
