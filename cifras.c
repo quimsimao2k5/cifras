@@ -2,6 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <math.h>
 
 int indiceLetra(char letra){
     if(isupper(letra)) return letra - 'A';
@@ -383,6 +384,66 @@ void descodificarMensagemVertical(char *mensagem, int chave, char *direcao, char
         }
     }
     mensagemDescodificada[k] = '\0'; // Terminar a mensagem descodificada
+}
+
+int quadradoPerfeito(int num) {
+    if (num < 0) {
+        return 0;
+    }
+    int raiz = (int)sqrt(num);
+    if(raiz * raiz == num)return raiz;
+    else return 0;
+}
+
+void caracol(char m[]){
+    int size=strlen(m);
+    int tamanhoperfeito=quadradoPerfeito(size);
+    if(tamanhoperfeito==0){
+        printf("Não é quadrado perfeito");    
+        return;
+    }
+    int k=0;
+    char tabela[tamanhoperfeito][tamanhoperfeito];
+    for(int i=0;i<tamanhoperfeito;i++){
+        for(int j=0;j<tamanhoperfeito;j++){
+            tabela[i][j]=m[k++];
+        }
+    }
+    k=0;
+    int i, inicioLinha = 0, inicioColuna = 0;
+    int index = 0;
+    int linhas, colunas;
+    linhas=colunas=tamanhoperfeito;
+
+    while (inicioLinha < linhas && inicioColuna < colunas) {
+        for (i = inicioLinha; i < linhas; ++i) {
+            m[index++] = tabela[i][inicioColuna];
+        }
+        inicioColuna++;
+
+        // Última linha de cima para baixo
+        for (i = inicioColuna; i < colunas; ++i) {
+            m[index++] = tabela[linhas - 1][i];
+        }
+        linhas--;
+
+        // Última coluna da direita para a esquerda
+        if (inicioColuna < colunas) {
+            for (i = linhas - 1; i >= inicioLinha; --i) {
+                m[index++] = tabela[i][colunas - 1];
+            }
+            colunas--;
+        }
+
+        // Primeira linha de baixo para cima
+        if (inicioLinha < linhas) {
+            for (i = colunas - 1; i >= inicioColuna; --i) {
+                m[index++] = tabela[inicioLinha][i];
+            }
+            inicioLinha++;
+        }
+    }
+    m[index] = '\0'; // Adiciona o terminador nulo ao final da string
 }
 
 int main(){
