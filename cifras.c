@@ -421,13 +421,11 @@ void caracol(char m[]){
         }
         inicioColuna++;
 
-        // Última linha de cima para baixo
         for (i = inicioColuna; i < colunas; ++i) {
             m[index++] = tabela[linhas - 1][i];
         }
         linhas--;
 
-        // Última coluna da direita para a esquerda
         if (inicioColuna < colunas) {
             for (i = linhas - 1; i >= inicioLinha; --i) {
                 m[index++] = tabela[i][colunas - 1];
@@ -435,7 +433,6 @@ void caracol(char m[]){
             colunas--;
         }
 
-        // Primeira linha de baixo para cima
         if (inicioLinha < linhas) {
             for (i = colunas - 1; i >= inicioColuna; --i) {
                 m[index++] = tabela[inicioLinha][i];
