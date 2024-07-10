@@ -469,7 +469,7 @@ void removeRepetidos(char* palavra) {
     for (int i = 1; i < length; i++) {
         int j;
         for (j = 0; j < index; j++) {
-            if (palavra[i] == palavra[j]) break;
+            if (palavra[i] == palavra[j] || palavra[i]==' ') break;
         }
         if (j == index) {
             palavra[index++] = palavra[i];
@@ -543,6 +543,89 @@ void descodificarPalChaTecoree(char *mensagem, char *chave, char *mensagemDescod
     mensagemDescodificada[k] = '\0'; // Terminar a mensagem descodificada
 }
 
+void decifrapalavrachave(char mensagem[], char chave1[], char chave2[]) {
+    int tamanho = strlen(mensagem);
+    for (int i = 0; i < tamanho; i++) {
+        int pos2 = procuraNaPalavra(chave2, mensagem[i]);
+        int pos1 = procuraNaPalavra(chave1, mensagem[i]);
+        printf("%d %d\n",pos1,pos2);
+        if (pos1 == -1 && pos2 != -1) {
+            mensagem[i] = chave1[pos2];
+        } else if (pos1 != -1 && pos2 == -1) {
+            mensagem[i] = chave2[pos1];
+        }
+    }
+}
+
+void palavrachave(char mensagem[], char pchave[]) {
+    removeRepetidos(pchave);
+    int tamanho = strlen(pchave);
+    char chave1[14]={0};
+    char chave2[14]={0};
+    int i;
+    char letra = 'A';
+    int max = (tamanho > 13) ? 13 : tamanho;
+
+    for (i = 0; i < max; i++) {
+        chave1[i] = pchave[i];
+    }
+
+    if (max == tamanho) {
+        while (i < 13) {
+            if (procuraNaPalavra(pchave, letra) == -1) chave1[i++] = letra;
+            letra++;
+        }
+        chave1[i] = '\0';
+        i = 0;
+        while (i < 13) {
+            if (procuraNaPalavra(pchave, letra) == -1) chave2[i++] = letra;
+            letra++;
+        }
+        chave2[i] = '\0';
+    } else {
+        chave1[i] = '\0';
+        int k;
+        for (k = 0, i = max; i < tamanho; i++) {
+            chave2[k++] = pchave[i];
+        }
+        while (k < 13) {
+            if (procuraNaPalavra(pchave, letra) == -1) chave2[k++] = letra;
+            letra++;
+        }
+        chave2[k] = '\0';
+    }
+    decifrapalavrachave(mensagem, chave1, chave2);
+}
+
+void descodificarPalChafrase(char *mensagem, char *chave, char *mensagemDescodificada) {
+    char palavra[100]; // Buffer temporário para armazenar uma palavra
+    int indicePalavra = 0; // Índice para o buffer temporário
+    int k = 0; // Índice para a mensagem descodificada
+    int comprimento = strlen(mensagem);
+
+    for (int i = 0; i <= comprimento; i++) {
+        if (mensagem[i] == ' ' || mensagem[i] == '\0') {
+            // Fim de uma palavra ou fim da mensagem
+            palavra[indicePalavra] = '\0'; // Terminar a palavra temporária
+
+            palavrachave(palavra, chave);
+
+            // Adicionar a palavra descodificada na mensagem final
+            for (int j = 0; j < strlen(palavra); j++) {
+                mensagemDescodificada[k++] = palavra[j];
+            }
+
+            if (mensagem[i] == ' ') {
+                mensagemDescodificada[k++] = ' '; // Adicionar espaço entre as palavras
+            }
+
+            indicePalavra = 0; // Resetar o índice da palavra temporária para a próxima palavra
+        } else {
+            palavra[indicePalavra++] = mensagem[i]; // Adicionar o caractere à palavra temporária
+        }
+    }
+    mensagemDescodificada[k] = '\0'; // Terminar a mensagem descodificada
+}
 
 int quadradoPerfeito(int num) {
     if (num < 0) {
