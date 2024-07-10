@@ -548,7 +548,6 @@ void decifrapalavrachave(char mensagem[], char chave1[], char chave2[]) {
     for (int i = 0; i < tamanho; i++) {
         int pos2 = procuraNaPalavra(chave2, mensagem[i]);
         int pos1 = procuraNaPalavra(chave1, mensagem[i]);
-        printf("%d %d\n",pos1,pos2);
         if (pos1 == -1 && pos2 != -1) {
             mensagem[i] = chave1[pos2];
         } else if (pos1 != -1 && pos2 == -1) {
