@@ -459,6 +459,91 @@ void descodificarMensagemHorizontal(char *mensagem, int chave, char *direcao, ch
     mensagemDescodificada[k] = '\0'; // Terminar a mensagem descodificada
 }
 
+void removeRepetidos(char* palavra) {
+    int length = strlen(palavra);
+    if (length <= 1) {
+        return;
+    }
+
+    int index = 1;
+    for (int i = 1; i < length; i++) {
+        int j;
+        for (j = 0; j < index; j++) {
+            if (palavra[i] == palavra[j]) break;
+        }
+        if (j == index) {
+            palavra[index++] = palavra[i];
+        }
+    }
+    palavra[index] = '\0';
+}
+
+int procuraNaPalavra(char m[], char l) {
+    for (int i = 0; i < strlen(m); i++) {
+        if (m[i] == l) return i;
+    }
+    return -1;
+}
+
+void decifraPCTecoree(char mensagem[], char chave[]) {
+    int length = strlen(mensagem); // Armazena o comprimento da mensagem
+    for (int i = 0; i < length; i++) {
+        int n = procuraNaPalavra(chave, mensagem[i]);
+        char letra = 'A' + n;
+        mensagem[i] = letra;
+    }
+}
+
+void palavrachavesingle_tecoree(char mensagem[], char palavrachave[]) {
+    removeRepetidos(palavrachave);
+    int tamanho = strlen(palavrachave);
+    char chave[26];
+    int i;
+
+    for (i = 0; i < tamanho; i++) {
+        chave[i] = palavrachave[i];
+    }
+
+    char letra = 'A';
+    while (i < 26) {
+        if (procuraNaPalavra(palavrachave, letra) == -1) chave[i++] = letra;
+        letra++;
+    }
+    chave[i] = '\0';
+    decifraPCTecoree(mensagem, chave);
+}
+
+void descodificarPalChaTecoree(char *mensagem, char *chave, char *mensagemDescodificada) {
+    char palavra[100]; // Buffer temporário para armazenar uma palavra
+    int indicePalavra = 0; // Índice para o buffer temporário
+    int k = 0; // Índice para a mensagem descodificada
+    int comprimento = strlen(mensagem);
+
+    for (int i = 0; i <= comprimento; i++) {
+        if (mensagem[i] == ' ' || mensagem[i] == '\0') {
+            // Fim de uma palavra ou fim da mensagem
+            palavra[indicePalavra] = '\0'; // Terminar a palavra temporária
+
+            palavrachavesingle_tecoree(palavra, chave);
+
+            // Adicionar a palavra descodificada na mensagem final
+            for (int j = 0; j < strlen(palavra); j++) {
+                mensagemDescodificada[k++] = palavra[j];
+            }
+
+            if (mensagem[i] == ' ') {
+                mensagemDescodificada[k++] = ' '; // Adicionar espaço entre as palavras
+            }
+
+            indicePalavra = 0; // Resetar o índice da palavra temporária para a próxima palavra
+        } else {
+            palavra[indicePalavra++] = mensagem[i]; // Adicionar o caractere à palavra temporária
+        }
+    }
+    mensagemDescodificada[k] = '\0'; // Terminar a mensagem descodificada
+}
+
+
 int quadradoPerfeito(int num) {
     if (num < 0) {
         return 0;
@@ -516,91 +601,3 @@ void caracol(char m[]){
     m[index] = '\0'; // Adiciona o terminador nulo ao final da string
 }
 
-int main(){
-    char mensagem[100]="13 V III 10 2 14 III 17 II 9";
-    // while (fgets(mensagem, sizeof(mensagem), stdin)){
-    //     mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
-    //     switch (mensagem[0]) {
-    //         case 'E':
-    //             if (strcmp("EXIT", mensagem) == 0)
-    //                 exit(0);
-    //             else
-    //                 printf("COMANDO INVALIDO\n");
-    //             break;
-    //         case 'A':
-    //             if (strcmp("AI", mensagem) == 0) {
-    //                 if (fgets(mensagem, sizeof(mensagem), stdin)){
-    //                     mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
-    //                     alfabetoInvertido(mensagem);
-    //                 }
-    //             } else if (strcmp("AT", mensagem) == 0) {
-    //                 char c;
-    //                 if (scanf(" %c", &c) != 0) {
-    //                     if (fgets(mensagem, sizeof(mensagem), stdin)){
-    //                         mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
-    //                         alfabetoTransposto(mensagem, c);
-    //                     }
-    //                 }
-    //             } else {
-    //                 printf("COMANDO INVALIDO\n");
-    //             }
-    //             break;
-    //         case 'P':
-    //             if (strcmp("PM", mensagem) == 0) {
-    //                 int z;
-    //                 if (scanf(" %d", &z) != 0) {
-    //                     if (fgets(mensagem, sizeof(mensagem), stdin)){
-    //                         mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
-    //                         passaMelros(mensagem, z);
-    //                     }
-    //                 }
-    //             } else {
-    //                 printf("COMANDO INVALIDO\n");
-    //             }
-    //             break;
-    //         case 'D':
-    //             if(strcmp("DATA",mensagem)==0){
-    //                 int ano;
-    //                 if(scanf(" %d", &ano)!=0){
-    //                     if (fgets(mensagem, sizeof(mensagem), stdin)){
-    //                         mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
-    //                         data(mensagem,ano);
-    //                     }
-    //                 }
-    //             }
-    //             else {
-    //                 printf("COMANDO INVALIDO\n");
-    //             }
-    //             break;
-    //         case 'M':
-    //             if(strcmp("MTD",mensagem)==0){
-    //                 if (fgets(mensagem, sizeof(mensagem), stdin)){
-    //                     mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
-    //                     metades(mensagem);
-    //                 }
-    //             }
-    //             else {
-    //                 printf("COMANDO INVALIDO\n");
-    //             }
-    //             break;
-    //         case 'C':
-    //             if(strcmp("CRG",mensagem)==0){
-    //                 if (fgets(mensagem, sizeof(mensagem), stdin)){
-    //                     mensagem[strcspn(mensagem, "\n")] = 0; // remove newline character
-    //                     carangueijo(mensagem);
-    //                 }
-    //             }
-    //             else {
-    //                 printf("COMANDO INVALIDO\n");
-    //             }
-    //             break;
-    //         default:
-    //             printf("COMANDO INVALIDO\n");
-    //             break;
-    //     }
-    //     printf("Mensagem descodificada: %s\n", mensagem);
-    // }
-    romanoArabe(mensagem);
-    printf("Mensagem descodificada: %s\n", mensagem);
-    return 0;
-}
